@@ -1,44 +1,19 @@
-import React, { Component } from 'react'
+import React from 'react'
+import Chat from './components/Chat'
 
 
-class App extends Component {
-  state = { 
-    counter: 0
+const styles = {
+  center: {
+    textAlign: 'center'
   }
+}
 
-  componentDidMount() {
-    this.readFromDB()
-  }
-
-  readFromDB = () => {
-    fetch(
-      'https://jfddl4-sandbox.firebaseio.com/bartosz/counter.json'
-    ).then(r => r.json())
-      .then(counter => this.setState({counter}))
-  }
-
-  sendToDB = () => {
-    fetch(
-      'https://jfddl4-sandbox.firebaseio.com/bartosz/.json', {
-      method: "PUT",
-      body: JSON.stringify(this.state)
-    })
-  }
-
-  counterHandler = (value) => {
-    this.setState({
-      counter: value
-    }, this.sendToDB())
-  }
-
+class App extends React.Component {
+  
   render() {
     return (
-      <div>
-        <h1>
-          {this.state.counter}
-        </h1>
-        <RaisedButton onClick={() => {this.counterHandler(this.state.counter - 1)}}>-</button>
-        <button onClick={() => {this.counterHandler(this.state.counter + 1)}}>+</button>
+      <div style={styles.center}>
+        <Chat />
       </div>
     );
   }
