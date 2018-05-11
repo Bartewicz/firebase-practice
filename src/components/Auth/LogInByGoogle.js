@@ -5,7 +5,7 @@ const LogInByGoogle = (props) => (
   <div>
     <RaisedButton
       secondary={true}
-      label={'Log in with Google'}
+      label={<b>Log in with Google</b>}
       onClick={props.onLogInClick}
     />
   </div>

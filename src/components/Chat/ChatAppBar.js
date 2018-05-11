@@ -1,6 +1,6 @@
 import React from 'react'
 // Firebase
-import { auth } from './../firebase'
+import { auth } from '../../firebase'
 // Material-ui
 import AppBar from 'material-ui/AppBar'
 import IconButton from 'material-ui/IconButton'

@@ -1,26 +1,28 @@
 import React from 'react'
 // Firebase
-import { database } from '../firebase'
+import { auth, database } from '../../firebase'
 // UI
 // Material-ui
 import TextField from 'material-ui/TextField'
 import RaisedButton from 'material-ui/RaisedButton/RaisedButton'
-import MenuItem from 'material-ui/MenuItem'
 // import PaperRefined from '../views/paper-refined'
-import Paper from '../views/PaperRefined'
+import Paper from '../../views/PaperRefined'
 // Utils
-import { mapObjectToArray } from './utils'
-import moment from 'moment'
-import ChatAppBar from './ChatAppBar';
+import { mapObjectToArray } from './../utils'
+import ChatAppBar from './ChatAppBar'
+import Message from './Message'
+import PaperRefined from '../../views/PaperRefined';
 
 class Chat extends React.Component {
   state = {
-    name: 'Szymon',
+    name: '',
     newMessage: '',
     messages: null
   }
 
   componentDidMount() {
+    console.log(auth.currentUser)
+
     database.ref('/chat').on('value', (snapshot) => (
       this.setState({
         messages: mapObjectToArray(snapshot.val()).reverse()
@@ -41,9 +43,11 @@ class Chat extends React.Component {
 
 
   addMessage = () => {
-    database.ref('/chat').push({
+    const newRefForMessage = database.ref('/chat').push({
       message: this.state.newMessage,
-      user: this.state.name,
+      user: auth.currentUser.displayName,
+      email: auth.currentUser.email,
+      avatar: auth.currentUser.photoURL,
       timestamp: Date.now()
     })
     this.setState({
@@ -55,7 +59,7 @@ class Chat extends React.Component {
     return (
       <div>
         <ChatAppBar />
-        <Paper>
+        <PaperRefined centered={true}>
           <h1>
             Your name is now: {this.state.name}
           </h1>
@@ -69,6 +73,11 @@ class Chat extends React.Component {
             name={'new-message'}
             onChange={this.textHandler}
             fullWidth={true}
+            onKeyPress={(event) => {
+              if (event.key === 'Enter') {
+                this.addMessage()
+              }
+            }}
             value={this.state.newMessage}
           />
           <RaisedButton
@@ -77,22 +86,21 @@ class Chat extends React.Component {
             label={'Send!'}
             primary={true}
           />
-        </Paper>
-        <Paper>
+        </PaperRefined>
+        <div>
           {!this.state.messages ?
-            'No messages yet.'
+            <PaperRefined centered={true}>
+              'No messages yet.'
+            </PaperRefined>
             :
-            this.state.messages.map((el) => (
-              <MenuItem
-                key={el.timestamp}
-                secondaryText={
-                  <em>{moment(el.timestamp).format('h:mm:ss a, MMMM Do YYYY')}</em>
-                }>
-                <strong>{el.user}:</strong>&nbsp;{el.message}
-              </MenuItem>
+            this.state.messages.map((message) => (
+              <Message
+                key={message.timestamp}
+                message={message}
+              />
             ))
           }
-        </Paper>
+        </div>
       </div>
     )
   }
