@@ -5,19 +5,19 @@ import { database } from '../firebase'
 // Material-ui
 import TextField from 'material-ui/TextField'
 import RaisedButton from 'material-ui/RaisedButton/RaisedButton'
-import Menu from 'material-ui/Menu'
 import MenuItem from 'material-ui/MenuItem'
 // import PaperRefined from '../views/paper-refined'
 import Paper from '../views/PaperRefined'
 // Utils
 import { mapObjectToArray } from './utils'
 import moment from 'moment'
+import ChatAppBar from './ChatAppBar';
 
 class Chat extends React.Component {
   state = {
     name: 'Szymon',
     newMessage: '',
-    messages: []
+    messages: null
   }
 
   componentDidMount() {
@@ -40,16 +40,21 @@ class Chat extends React.Component {
     })
 
 
-  addMessage = () =>
+  addMessage = () => {
     database.ref('/chat').push({
       message: this.state.newMessage,
       user: this.state.name,
       timestamp: Date.now()
     })
+    this.setState({
+      newMessage: ''
+    })
+  }
 
   render() {
     return (
       <div>
+        <ChatAppBar />
         <Paper>
           <h1>
             Your name is now: {this.state.name}
@@ -74,7 +79,9 @@ class Chat extends React.Component {
           />
         </Paper>
         <Paper>
-          {this.state.messages !== [] ?
+          {!this.state.messages ?
+            'No messages yet.'
+            :
             this.state.messages.map((el) => (
               <MenuItem
                 key={el.timestamp}
@@ -84,8 +91,6 @@ class Chat extends React.Component {
                 <strong>{el.user}:</strong>&nbsp;{el.message}
               </MenuItem>
             ))
-            :
-            'No messages.'
           }
         </Paper>
       </div>

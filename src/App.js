@@ -1,15 +1,17 @@
 import React from 'react'
+
 import Chat from './components/Chat'
+import Auth from './components/Auth'
 
 class App extends React.Component {
   
   render() {
     return (
-      <div>
+      <Auth>
         <Chat />
-      </div>
+      </Auth>
     )
   }
 }
 
-export default App;
+export default App
